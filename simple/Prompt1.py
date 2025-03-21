@@ -1,6 +1,8 @@
 import os
 
 from dotenv import load_dotenv, find_dotenv
+from langchain.chains import LLMChain
+from langchain.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 
 _ = load_dotenv(find_dotenv()) # read local .env file
@@ -14,6 +16,16 @@ llm = ChatOpenAI(
     openai_api_base="https://api.groq.com/openai/v1"
 )
 
-# Generate a response
-response = llm.invoke("Explain LangGraph in simple terms.")
+prompt = PromptTemplate(
+    input_variables=["topic"],
+    template="Explain {topic} in simple terms."
+)
+
+
+# New way to create a chain using RunnableSequence
+chain = prompt | llm
+
+# Invoke the chain
+response = chain.invoke({"topic": "LangChain"})
+
 print(response.content)
